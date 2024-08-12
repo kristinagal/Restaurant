@@ -1,0 +1,50 @@
+{
+  "OrderNumber": 6526,
+  "FoodOrders": [
+    {
+      "FoodItem": {
+        "Name": "Burger",
+        "Price": 5.99
+      },
+      "Quantity": 1,
+      "TimeStamp": "2024-08-12T20:16:18.0627656+03:00"
+    }
+  ],
+  "DrinkOrders": [],
+  "Employee": {
+    "ID": "E001",
+    "IsCurrentlyLoggedIn": true
+  },
+  "Table": {
+    "TableNumber": 1,
+    "Seats": 4,
+    "IsAvailable": false
+  },
+  "ClientWantsCheck": true,
+  "IsClosedOut": true
+}
+{
+  "OrderNumber": 2584,
+  "FoodOrders": [
+    {
+      "FoodItem": {
+        "Name": "Pizza",
+        "Price": 8.49
+      },
+      "Quantity": 1,
+      "TimeStamp": "2024-08-12T20:34:43.4088026+03:00"
+    }
+  ],
+  "DrinkOrders": [],
+  "Employee": {
+    "ID": "E001",
+    "IsCurrentlyLoggedIn": true
+  },
+  "Table": {
+    "TableNumber": 1,
+    "Seats": 4,
+    "IsAvailable": false
+  },
+  "ClientWantsCheck": true,
+  "IsClosedOut": true
+}
