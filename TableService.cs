@@ -21,20 +21,20 @@ namespace Restaurant
             _uiService = uiService;
         }
 
-        public Table ShowAllTablesMenu()
-        {
-            Console.Clear();
-            Console.WriteLine("Available Tables:");
+        //public Table ShowAllTablesMenu()
+        //{
+        //    Console.Clear();
+        //    Console.WriteLine("Available Tables:");
 
-            for (int i = 0; i < _tables.Count; i++)
-            {
-                var table = _tables[i];
-                Console.WriteLine($"{i + 1}. Table {table.TableNumber} - Seats: {table.Seats}, Available: {table.IsAvailable}");
-            }
+        //    for (int i = 0; i < _tables.Count; i++)
+        //    {
+        //        var table = _tables[i];
+        //        Console.WriteLine($"{i + 1}. Table {table.TableNumber} - Seats: {table.Seats}, Available: {table.IsAvailable}");
+        //    }
 
-            int selection = _uiService.GetMenuSelection(1, _tables.Count);
-            return _tables[selection - 1];
-        }
+        //    int selection = _uiService.GetMenuSelection(1, _tables.Count);
+        //    return _tables[selection - 1];
+        //}
 
         public void TableCheckOut(int tableNumber)
         {

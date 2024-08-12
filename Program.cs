@@ -10,9 +10,12 @@
 
             /*
              Problemos:
-            stalas nepazymimas kaip uzimtas
-            current balance - rodyti čekio info?
 
+            stalas nepazymimas kaip uzimtas, order objektą kurti kai pasirenkamas stalas?
+            current balance - rodyti visa čekio info?
+            email siuntimas
+            nunit
+            kai programa restartuoja, visus employees padaryt neprisilogginusius
              
              */
 
