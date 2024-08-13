@@ -12,29 +12,16 @@ namespace Restaurant
         private readonly List<Table> _tables;
         private readonly Dictionary<int, Order> _currentOrders;
         private UiService _uiService;
+        private FileManager _fileManager;
         public Employee CurrentEmployee { get; private set; }
 
-        public TableService(List<Table> tables, UiService uiService)
+        public TableService(List<Table> tables, UiService uiService, FileManager fileManager)
         {
             _tables = tables;
             _currentOrders = new Dictionary<int, Order>();
             _uiService = uiService;
+            _fileManager = fileManager;
         }
-
-        //public Table ShowAllTablesMenu()
-        //{
-        //    Console.Clear();
-        //    Console.WriteLine("Available Tables:");
-
-        //    for (int i = 0; i < _tables.Count; i++)
-        //    {
-        //        var table = _tables[i];
-        //        Console.WriteLine($"{i + 1}. Table {table.TableNumber} - Seats: {table.Seats}, Available: {table.IsAvailable}");
-        //    }
-
-        //    int selection = _uiService.GetMenuSelection(1, _tables.Count);
-        //    return _tables[selection - 1];
-        //}
 
         public void TableCheckOut(int tableNumber)
         {
@@ -43,10 +30,7 @@ namespace Restaurant
                 _currentOrders.Remove(tableNumber);
             }
             var table = _tables.FirstOrDefault(t => t.TableNumber == tableNumber);
-            if (table != null)
-            {
-                table.IsAvailable = true;
-            }
+            UpdateTableAvailability(table.TableNumber, true);
         }
 
         public Order GetOrderForTable(int tableNumber)
@@ -55,13 +39,21 @@ namespace Restaurant
             {
                 return order;
             }
+
+            var table = _tables.FirstOrDefault(t => t.TableNumber == tableNumber);
+            if (table != null)
+            {
+                UpdateTableAvailability(table.TableNumber, false);
+            }
+           
+
             return null;
         }
 
         public void CreateNewOrder(Order order)
         {
             _currentOrders[order.Table.TableNumber] = order;
-            order.Table.IsAvailable = false;
+            UpdateTableAvailability(order.Table.TableNumber, false);
         }
 
         public void LogIn(Employee employee)
@@ -73,10 +65,35 @@ namespace Restaurant
         {
             if (CurrentEmployee != null)
             {
-                CurrentEmployee.IsCurrentlyLoggedIn = false;
                 CurrentEmployee = null;
+            }
+        }
+
+        public void UpdateTableAvailability(int tableNumber, bool isAvailable)
+        {
+            // Read existing tables from the file
+            var tables = _fileManager.ReadCsvFile("Tables.csv", tokens => new Table
+            {
+                TableNumber = int.Parse(tokens[0]),
+                Seats = int.Parse(tokens[1]),
+                IsAvailable = bool.Parse(tokens[2])
+            });
+
+            // Find and update the specified table
+            var table = tables.FirstOrDefault(t => t.TableNumber == tableNumber);
+            if (table != null)
+            {
+                table.IsAvailable = isAvailable;
+
+                // Prepare CSV header and write updated table data
+                var header = "TableNumber,Seats,IsAvailable";
+                _fileManager.WriteCsvFile("Tables.csv", tables, t => $"{t.TableNumber},{t.Seats},{t.IsAvailable}", header);
+            }
+            else
+            {
+                Console.WriteLine("Table not found.");
             }
         }
     }
 
-}
+ }

@@ -1,6 +1,6 @@
 ﻿namespace Restaurant
 {
-    public class RestaurantApplication
+    public class Restaurant
     {
         private readonly string _folderPath;
         private FileManager _fileManager;
@@ -8,7 +8,7 @@
         private TableService _tableService;
         private OrderService _orderService;
 
-        public RestaurantApplication(string folderPath)
+        public Restaurant(string folderPath)
         {
             _folderPath = folderPath;
         }
@@ -19,13 +19,13 @@
 
             while (true)
             {
-                LogIn();
-                if (string.IsNullOrEmpty(_tableService.CurrentEmployee?.ID))
+                do
                 {
                     Console.Clear();
-                    Console.WriteLine("No valid employee logged in. Exiting...");
-                    return; // Exit the application if no employee is logged in
+                    LogIn();
                 }
+                while (string.IsNullOrEmpty(_tableService.CurrentEmployee?.ID));
+
 
                 ShowTableMenu();
             }
@@ -35,40 +35,57 @@
         {
             try
             {
-                // Initialize FileManager and UiService
                 _fileManager = new FileManager(_folderPath);
                 _uiService = new UiService();
 
-                // Load data from files
                 var employees = _fileManager.ReadCsvFile("Employees.csv", tokens => new Employee
                 {
-                    ID = tokens[0],
-                    IsCurrentlyLoggedIn = bool.Parse(tokens[1])
-                });
+                    ID = tokens[0]
+                }).ToList();
 
                 var tables = _fileManager.ReadCsvFile("Tables.csv", tokens => new Table
                 {
                     TableNumber = int.Parse(tokens[0]),
                     Seats = int.Parse(tokens[1]),
                     IsAvailable = bool.Parse(tokens[2])
-                });
+                }).ToList();
 
                 var foodMenu = _fileManager.ReadCsvFile("FoodMenu.csv", tokens => new FoodItem
                 {
                     Name = tokens[0],
                     Price = double.Parse(tokens[1])
-                });
+                }).ToList();
 
                 var drinksMenu = _fileManager.ReadCsvFile("DrinksMenu.csv", tokens => new DrinkItem
                 {
                     Name = tokens[0],
                     Price = double.Parse(tokens[1])
-                });
+                }).ToList();
 
                 // Initialize services
-                _tableService = new TableService(tables, _uiService);
-                _orderService = new OrderService(foodMenu, drinksMenu);
+                _tableService = new TableService(tables, _uiService, _fileManager);
+                _orderService = new OrderService(foodMenu, drinksMenu, _fileManager);
 
+                // Load unclosed orders from the file
+                var existingOrders = _fileManager.ReadOrdersFromJsonFile();
+                foreach (var order in existingOrders.Where(o => !o.IsClosedOut))
+                {
+                    // Find the table for the order
+                    var table = tables.FirstOrDefault(t => t.TableNumber == order.Table.TableNumber);
+
+                    if (table != null)
+                    {
+                        // Assign the table to the order
+                        order.Table = table;
+
+                        // Create or update the order in the TableService
+                        _tableService.CreateNewOrder(order);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Table for order {order.OrderNumber} not found.");
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -82,8 +99,7 @@
             Console.Clear();
             var employees = _fileManager.ReadCsvFile("Employees.csv", tokens => new Employee
             {
-                ID = tokens[0],
-                IsCurrentlyLoggedIn = bool.Parse(tokens[1])
+                ID = tokens[0]
             });
 
             var employeeID = _uiService.GetEmployeeID();
@@ -95,14 +111,6 @@
                 return;
             }
 
-            if (employee.IsCurrentlyLoggedIn)
-            {
-                Console.WriteLine("Employee is already logged in.");
-                return;
-            }
-
-            employee.IsCurrentlyLoggedIn = true;
-            _fileManager.WriteCsvFile("Employees.csv", employees, e => $"{e.ID},{e.IsCurrentlyLoggedIn}");
             _tableService.LogIn(employee);
         }
 
@@ -110,8 +118,7 @@
         {
             var employees = _fileManager.ReadCsvFile("Employees.csv", tokens => new Employee
             {
-                ID = tokens[0],
-                IsCurrentlyLoggedIn = bool.Parse(tokens[1])
+                ID = tokens[0]
             });
 
             var employeeID = _tableService.CurrentEmployee?.ID;
@@ -119,8 +126,6 @@
 
             if (employee != null)
             {
-                employee.IsCurrentlyLoggedIn = false;
-                _fileManager.WriteCsvFile("Employees.csv", employees, e => $"{e.ID},{e.IsCurrentlyLoggedIn}");
                 _tableService.LogOut();
             }
         }
@@ -154,7 +159,7 @@
                 if (selection == tables.Count + 1)
                 {
                     LogOut();
-                    return; 
+                    return;
                 }
 
                 if (selection < 1 || selection > tables.Count)
@@ -186,6 +191,8 @@
             while (true)
             {
                 Console.Clear();
+                Console.WriteLine($"Current Employee: {_tableService.CurrentEmployee?.ID ?? "None"}");
+                Console.WriteLine($"Table No. {order.Table.TableNumber}:");
                 Console.WriteLine("1. Add Food Item");
                 Console.WriteLine("2. Add Drink Item");
                 Console.WriteLine("3. Check Current Balance");
@@ -232,7 +239,7 @@
                         break;
 
                     case "3":
-                        Console.WriteLine($"Current Balance: {_orderService.GetCurrentBalance(order):C}");
+                        Console.WriteLine(order.GetOrderSummary());
                         Console.ReadLine();
                         break;
 
@@ -252,7 +259,6 @@
                 }
             }
         }
-
     }
 
 }

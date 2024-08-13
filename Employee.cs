@@ -9,30 +9,34 @@ namespace Restaurant
     public class Employee
     {
         public string ID { get; set; }
-        public bool IsCurrentlyLoggedIn { get; set; }
     }
+
     public class FoodItem
     {
         public string Name { get; set; }
         public double Price { get; set; }
     }
+
     public class DrinkItem
     {
         public string Name { get; set; }
         public double Price { get; set; }
     }
+
     public class FoodOrder
     {
         public FoodItem FoodItem { get; set; }
         public int Quantity { get; set; }
         public DateTime TimeStamp { get; set; }
     }
+
     public class DrinkOrder
     {
         public DrinkItem DrinkItem { get; set; }
         public int Quantity { get; set; }
         public DateTime TimeStamp { get; set; }
     }
+
     public class Order
     {
         public int OrderNumber { get; set; }
@@ -67,6 +71,26 @@ namespace Restaurant
 
             return foodTotal + drinkTotal;
         }
+
+        public string GetOrderSummary()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"Order Number: {OrderNumber}");
+            sb.AppendLine($"Table Number: {Table.TableNumber}");
+            sb.AppendLine($"Server: {Employee.ID}");
+            sb.AppendLine("Food Orders:");
+            foreach (var foodOrder in FoodOrders)
+            {
+                sb.AppendLine($"{foodOrder.FoodItem.Name} - ${foodOrder.FoodItem.Price:F2} x {foodOrder.Quantity}");
+            }
+            sb.AppendLine("Drink Orders:");
+            foreach (var drinkOrder in DrinkOrders)
+            {
+                sb.AppendLine($"{drinkOrder.DrinkItem.Name} - ${drinkOrder.DrinkItem.Price:F2} x {drinkOrder.Quantity}");
+            }
+            sb.AppendLine($"Total Price: ${GetTotalPrice():F2}");
+            return sb.ToString();
+        }
     }
     public class Table
     {
@@ -74,6 +98,4 @@ namespace Restaurant
         public int Seats { get; set; }
         public bool IsAvailable { get; set; }
     }
-
-
 }

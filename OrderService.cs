@@ -1,5 +1,11 @@
 ﻿using Newtonsoft.Json;
-using Formatting = Newtonsoft.Json.Formatting;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 
 namespace Restaurant
 {
@@ -7,37 +13,27 @@ namespace Restaurant
     {
         private readonly List<FoodItem> _foodMenu;
         private readonly List<DrinkItem> _drinkMenu;
-        private readonly Table _table;
+        private readonly FileManager _fileManager;
 
-        public OrderService(List<FoodItem> foodMenu, List<DrinkItem> drinkMenu)
+        public OrderService(List<FoodItem> foodMenu, List<DrinkItem> drinkMenu, FileManager fileManager)
         {
             _foodMenu = foodMenu;
             _drinkMenu = drinkMenu;
-        }
-
-        public OrderService(List<FoodItem> foodMenu, List<DrinkItem> drinkMenu, Table table)
-        {
-            _foodMenu = foodMenu;
-            _drinkMenu = drinkMenu;
-            _table = table;
-            _table.IsAvailable = false;
+            _fileManager = fileManager;
         }
 
         public void AddFood(Order order, int foodIndex, int quantity)
         {
             var foodItem = _foodMenu[foodIndex];
             order.FoodOrders.Add(new FoodOrder { FoodItem = foodItem, Quantity = quantity, TimeStamp = DateTime.Now });
+            SaveOrder(order);  // Save the updated order to the JSON file
         }
 
         public void AddDrink(Order order, int drinkIndex, int quantity)
         {
             var drinkItem = _drinkMenu[drinkIndex];
             order.DrinkOrders.Add(new DrinkOrder { DrinkItem = drinkItem, Quantity = quantity, TimeStamp = DateTime.Now });
-        }
-
-        public double GetCurrentBalance(Order order)
-        {
-            return order.GetTotalPrice();
+            SaveOrder(order);  // Save the updated order to the JSON file
         }
 
         public void CloseOrder(Order order, bool clientWantsCheck, string folderPath)
@@ -51,40 +47,53 @@ namespace Restaurant
 
             order.ClientWantsCheck = clientWantsCheck;
             order.IsClosedOut = true;
-            string restaurantCheckPath = Path.Combine(folderPath, "RestaurantChecks.json");
-            string customerCheckPath = Path.Combine(folderPath, $"{order.Table.TableNumber}_{order.OrderNumber}_{DateTime.Now:yyyyMMdd}.json");
+            string customerCheckPath = Path.Combine(folderPath, $"{order.Table.TableNumber}_{order.OrderNumber}_{DateTime.Now:yyyyMMdd}.pdf");
 
-            SaveOrder(order, restaurantCheckPath);
             if (clientWantsCheck)
             {
-                SaveOrder(order, customerCheckPath);
+                GeneratePdf(order, customerCheckPath);
             }
 
+            SaveOrder(order);  // Save the closed order to the JSON file
             order.Table.IsAvailable = true;
         }
 
-        private void SaveOrder(Order order, string path)
+        private void GeneratePdf(Order order, string path)
         {
-            var json = JsonConvert.SerializeObject(order, Formatting.Indented);
-            File.AppendAllText(path, json + Environment.NewLine);
+            Document doc = new Document();
+            PdfWriter.GetInstance(doc, new FileStream(path, FileMode.Create));
+            doc.Open();
+            doc.Add(new Paragraph(order.GetOrderSummary()));
+            doc.Close();
         }
 
-        public int GetFoodMenuCount()
+        private void SaveOrder(Order order)
         {
-            return _foodMenu.Count;
+            var orders = _fileManager.ReadOrdersFromJsonFile();
+            var existingOrderIndex = orders.FindIndex(o => o.OrderNumber == order.OrderNumber && o.Table.TableNumber == order.Table.TableNumber);
+
+            if (existingOrderIndex >= 0)
+            {
+                // Update existing order
+                orders[existingOrderIndex] = order;
+            }
+            else
+            {
+                // Add new order
+                orders.Add(order);
+            }
+
+            _fileManager.WriteJsonFile(orders); // Save updated orders list to JSON
         }
-        public int GetDrinkMenuCount()
-        {
-            return _drinkMenu.Count;
-        }
+
         public List<FoodItem> GetFoodMenu()
         {
             return _foodMenu;
         }
+
         public List<DrinkItem> GetDrinkMenu()
         {
             return _drinkMenu;
         }
     }
-
 }
