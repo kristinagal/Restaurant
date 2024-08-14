@@ -1,5 +1,5 @@
 TableNumber,Seats,IsAvailable
-1,4,True
+1,4,False
 2,2,True
 3,6,True
 4,4,True

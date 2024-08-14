@@ -1,16 +1,21 @@
-﻿namespace Restaurant
+﻿using Restaurant.Interfaces;
+using Restaurant.Models;
+
+namespace Restaurant.Services
 {
-    public class Restaurant
+    public class RestaurantService : IRestaurantService
     {
         private readonly string _folderPath;
         private FileManager _fileManager;
         private UiService _uiService;
         private TableService _tableService;
         private OrderService _orderService;
+        private readonly IEmailService _emailService;
 
-        public Restaurant(string folderPath)
+        public RestaurantService(string folderPath, IEmailService emailService)
         {
             _folderPath = folderPath;
+            _emailService = emailService;
         }
 
         public void Start()
@@ -31,7 +36,7 @@
             }
         }
 
-        private void InitializeFiles()
+        public void InitializeFiles()
         {
             try
             {
@@ -62,23 +67,17 @@
                     Price = double.Parse(tokens[1])
                 }).ToList();
 
-                // Initialize services
-                _tableService = new TableService(tables, _uiService, _fileManager);
-                _orderService = new OrderService(foodMenu, drinksMenu, _fileManager);
+                _tableService = new TableService(tables, _fileManager);
+                _orderService = new OrderService(foodMenu, drinksMenu, _fileManager, _emailService);
 
-                // Load unclosed orders from the file
                 var existingOrders = _fileManager.ReadOrdersFromJsonFile();
                 foreach (var order in existingOrders.Where(o => !o.IsClosedOut))
                 {
-                    // Find the table for the order
                     var table = tables.FirstOrDefault(t => t.TableNumber == order.Table.TableNumber);
 
                     if (table != null)
                     {
-                        // Assign the table to the order
                         order.Table = table;
-
-                        // Create or update the order in the TableService
                         _tableService.CreateNewOrder(order);
                     }
                     else
@@ -90,11 +89,11 @@
             catch (Exception ex)
             {
                 Console.WriteLine("An error occurred while initializing files: " + ex.Message);
-                Environment.Exit(1); // Exit the application if file initialization fails
+                Environment.Exit(1); // uzdaro programa jei kazkas su failais ne ok 
             }
         }
 
-        private void LogIn()
+        public void LogIn()
         {
             Console.Clear();
             var employees = _fileManager.ReadCsvFile("Employees.csv", tokens => new Employee
@@ -114,7 +113,7 @@
             _tableService.LogIn(employee);
         }
 
-        private void LogOut()
+        public void LogOut()
         {
             var employees = _fileManager.ReadCsvFile("Employees.csv", tokens => new Employee
             {
@@ -130,7 +129,7 @@
             }
         }
 
-        private void ShowTableMenu()
+        public void ShowTableMenu()
         {
             while (true)
             {
@@ -186,7 +185,7 @@
             }
         }
 
-        private void ShowOrderMenu(Order order)
+        public void ShowOrderMenu(Order order)
         {
             while (true)
             {
@@ -197,68 +196,70 @@
                 Console.WriteLine("2. Add Drink Item");
                 Console.WriteLine("3. Check Current Balance");
                 Console.WriteLine("4. Close Order");
-                Console.WriteLine("Q. Quit to Table Menu");
+                Console.WriteLine("5. Quit to Table Menu");
 
-                var choice = Console.ReadLine();
-                if (choice.ToUpper() == "Q")
-                {
-                    Console.Clear();
-                    return;
-                }
+                var choice = _uiService.GetMenuSelection(1, 5);
 
                 Console.Clear();
 
                 switch (choice)
                 {
-                    case "1":
+                    case 1:
                         Console.WriteLine("Food Menu:");
                         var foodItems = _orderService.GetFoodMenu();
-                        for (int i = 0; i < foodItems.Count; i++)
-                        {
-                            var item = foodItems[i];
-                            Console.WriteLine($"{i + 1}. {item.Name} - ${item.Price:F2}");
-                        }
-                        Console.WriteLine();
+                        _orderService.PrintMenu(foodItems);
+
                         int foodIndex = _uiService.GetMenuSelection(1, foodItems.Count);
                         int foodQuantity = _uiService.GetQuantity();
                         _orderService.AddFood(order, foodIndex - 1, foodQuantity);
                         break;
 
-                    case "2":
+                    case 2:
                         Console.WriteLine("Drink Menu:");
                         var drinkItems = _orderService.GetDrinkMenu();
-                        for (int i = 0; i < drinkItems.Count; i++)
-                        {
-                            var item = drinkItems[i];
-                            Console.WriteLine($"{i + 1}. {item.Name} - ${item.Price:F2}");
-                        }
-                        Console.WriteLine();
+                        _orderService.PrintMenu(drinkItems);
+
                         int drinkIndex = _uiService.GetMenuSelection(1, drinkItems.Count);
                         int drinkQuantity = _uiService.GetQuantity();
                         _orderService.AddDrink(order, drinkIndex - 1, drinkQuantity);
                         break;
 
-                    case "3":
+                    case 3:
                         Console.WriteLine(order.GetOrderSummary());
                         Console.ReadLine();
                         break;
 
-                    case "4":
+                    case 4:
                         if (_uiService.ConfirmAction("Do you want to close the tab?"))
                         {
-                            bool clientWantsCheck = _uiService.ConfirmAction("Does the customer need a check?");
-                            _orderService.CloseOrder(order, clientWantsCheck, _folderPath);
+                            Console.WriteLine();
+                            bool clientWantsCheck = _uiService.ConfirmAction("Does the customer want a check?");
+                            bool clientWantsEmail = _uiService.ConfirmAction("Does the customer want an email?");
+                            string email = "";
+
+                            if (clientWantsEmail)
+                            {
+                                email = _uiService.GetEmail();
+                            }
+
+                            _orderService.CloseOrder(order, clientWantsCheck, email, _folderPath);
                             _tableService.TableCheckOut(order.Table.TableNumber);
                             return;
                         }
                         break;
 
+                    case 5:
+                        Console.Clear();
+                        return;
+
                     default:
                         Console.WriteLine("Invalid choice. Please try again.");
                         break;
                 }
+
             }
         }
+
     }
 
 }

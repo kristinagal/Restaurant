@@ -1,42 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
-namespace Restaurant
+namespace Restaurant.Models
 {
-    public class Employee
-    {
-        public string ID { get; set; }
-    }
-
-    public class FoodItem
-    {
-        public string Name { get; set; }
-        public double Price { get; set; }
-    }
-
-    public class DrinkItem
-    {
-        public string Name { get; set; }
-        public double Price { get; set; }
-    }
-
-    public class FoodOrder
-    {
-        public FoodItem FoodItem { get; set; }
-        public int Quantity { get; set; }
-        public DateTime TimeStamp { get; set; }
-    }
-
-    public class DrinkOrder
-    {
-        public DrinkItem DrinkItem { get; set; }
-        public int Quantity { get; set; }
-        public DateTime TimeStamp { get; set; }
-    }
-
     public class Order
     {
         public int OrderNumber { get; set; }
@@ -76,7 +41,7 @@ namespace Restaurant
         {
             var sb = new StringBuilder();
             sb.AppendLine($"Order Number: {OrderNumber}");
-            sb.AppendLine($"Table Number: {Table.TableNumber}");
+            sb.AppendLine($"Table Number: {Table.TableNumber}, seats: {Table.Seats}");
             sb.AppendLine($"Server: {Employee.ID}");
             sb.AppendLine("Food Orders:");
             foreach (var foodOrder in FoodOrders)
@@ -91,11 +56,23 @@ namespace Restaurant
             sb.AppendLine($"Total Price: ${GetTotalPrice():F2}");
             return sb.ToString();
         }
-    }
-    public class Table
-    {
-        public int TableNumber { get; set; }
-        public int Seats { get; set; }
-        public bool IsAvailable { get; set; }
+
+        public string GetOrderSummaryForCustomer()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"Order Number: {OrderNumber}");
+            sb.AppendLine($"Server: {Employee.ID}");
+            sb.AppendLine("Order items:");
+            foreach (var foodOrder in FoodOrders)
+            {
+                sb.AppendLine($"{foodOrder.FoodItem.Name} - ${foodOrder.FoodItem.Price:F2} x {foodOrder.Quantity}");
+            }
+            foreach (var drinkOrder in DrinkOrders)
+            {
+                sb.AppendLine($"{drinkOrder.DrinkItem.Name} - ${drinkOrder.DrinkItem.Price:F2} x {drinkOrder.Quantity}");
+            }
+            sb.AppendLine($"Total Price: ${GetTotalPrice():F2}");
+            return sb.ToString();
+        }
     }
 }

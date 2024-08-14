@@ -4,22 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using Restaurant.Interfaces;
+using Restaurant.Models;
 
-namespace Restaurant
+namespace Restaurant.Services
 {
-    public class TableService
+    public class TableService : ITableService
     {
         private readonly List<Table> _tables;
         private readonly Dictionary<int, Order> _currentOrders;
-        private UiService _uiService;
         private FileManager _fileManager;
         public Employee CurrentEmployee { get; private set; }
 
-        public TableService(List<Table> tables, UiService uiService, FileManager fileManager)
+        public TableService(List<Table> tables, FileManager fileManager)
         {
             _tables = tables;
             _currentOrders = new Dictionary<int, Order>();
-            _uiService = uiService;
             _fileManager = fileManager;
         }
 
@@ -45,7 +45,7 @@ namespace Restaurant
             {
                 UpdateTableAvailability(table.TableNumber, false);
             }
-           
+
 
             return null;
         }
@@ -71,7 +71,6 @@ namespace Restaurant
 
         public void UpdateTableAvailability(int tableNumber, bool isAvailable)
         {
-            // Read existing tables from the file
             var tables = _fileManager.ReadCsvFile("Tables.csv", tokens => new Table
             {
                 TableNumber = int.Parse(tokens[0]),
@@ -79,13 +78,11 @@ namespace Restaurant
                 IsAvailable = bool.Parse(tokens[2])
             });
 
-            // Find and update the specified table
             var table = tables.FirstOrDefault(t => t.TableNumber == tableNumber);
             if (table != null)
             {
                 table.IsAvailable = isAvailable;
 
-                // Prepare CSV header and write updated table data
                 var header = "TableNumber,Seats,IsAvailable";
                 _fileManager.WriteCsvFile("Tables.csv", tables, t => $"{t.TableNumber},{t.Seats},{t.IsAvailable}", header);
             }
@@ -96,4 +93,4 @@ namespace Restaurant
         }
     }
 
- }
+}

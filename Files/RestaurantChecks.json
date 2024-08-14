@@ -22,5 +22,166 @@
     },
     "ClientWantsCheck": false,
     "IsClosedOut": true
+  },
+  {
+    "OrderNumber": 9159,
+    "FoodOrders": [],
+    "DrinkOrders": [
+      {
+        "DrinkItem": {
+          "Name": "Water",
+          "Price": 0.99
+        },
+        "Quantity": 2,
+        "TimeStamp": "2024-08-13T21:55:05.228347+03:00"
+      },
+      {
+        "DrinkItem": {
+          "Name": "Water",
+          "Price": 0.99
+        },
+        "Quantity": 1,
+        "TimeStamp": "2024-08-13T21:55:09.8889386+03:00"
+      }
+    ],
+    "Employee": {
+      "ID": "E001"
+    },
+    "Table": {
+      "TableNumber": 1,
+      "Seats": 4,
+      "IsAvailable": true
+    },
+    "ClientWantsCheck": false,
+    "IsClosedOut": true
+  },
+  {
+    "OrderNumber": 2666,
+    "FoodOrders": [
+      {
+        "FoodItem": {
+          "Name": "Burger",
+          "Price": 5.99
+        },
+        "Quantity": 1,
+        "TimeStamp": "2024-08-13T21:56:21.1477111+03:00"
+      }
+    ],
+    "DrinkOrders": [],
+    "Employee": {
+      "ID": "E001"
+    },
+    "Table": {
+      "TableNumber": 2,
+      "Seats": 2,
+      "IsAvailable": true
+    },
+    "ClientWantsCheck": false,
+    "IsClosedOut": true
+  },
+  {
+    "OrderNumber": 3757,
+    "FoodOrders": [
+      {
+        "FoodItem": {
+          "Name": "Burger",
+          "Price": 5.99
+        },
+        "Quantity": 2,
+        "TimeStamp": "2024-08-14T18:35:18.867815+03:00"
+      }
+    ],
+    "DrinkOrders": [
+      {
+        "DrinkItem": {
+          "Name": "Coke",
+          "Price": 1.99
+        },
+        "Quantity": 1,
+        "TimeStamp": "2024-08-14T18:35:15.6426182+03:00"
+      }
+    ],
+    "Employee": {
+      "ID": "E001"
+    },
+    "Table": {
+      "TableNumber": 1,
+      "Seats": 4,
+      "IsAvailable": false
+    },
+    "ClientWantsCheck": false,
+    "IsClosedOut": true
+  },
+  {
+    "OrderNumber": 5858,
+    "FoodOrders": [
+      {
+        "FoodItem": {
+          "Name": "Burger",
+          "Price": 5.99
+        },
+        "Quantity": 1,
+        "TimeStamp": "2024-08-14T20:21:15.4725379+03:00"
+      }
+    ],
+    "DrinkOrders": [],
+    "Employee": {
+      "ID": "E001"
+    },
+    "Table": {
+      "TableNumber": 1,
+      "Seats": 4,
+      "IsAvailable": true
+    },
+    "ClientWantsCheck": false,
+    "IsClosedOut": true
+  },
+  {
+    "OrderNumber": 2435,
+    "FoodOrders": [
+      {
+        "FoodItem": {
+          "Name": "Burger",
+          "Price": 5.99
+        },
+        "Quantity": 1,
+        "TimeStamp": "2024-08-14T20:23:32.1341531+03:00"
+      }
+    ],
+    "DrinkOrders": [],
+    "Employee": {
+      "ID": "E001"
+    },
+    "Table": {
+      "TableNumber": 2,
+      "Seats": 2,
+      "IsAvailable": true
+    },
+    "ClientWantsCheck": false,
+    "IsClosedOut": true
+  },
+  {
+    "OrderNumber": 7826,
+    "FoodOrders": [
+      {
+        "FoodItem": {
+          "Name": "Burger",
+          "Price": 5.99
+        },
+        "Quantity": 1,
+        "TimeStamp": "2024-08-14T20:24:50.8965003+03:00"
+      }
+    ],
+    "DrinkOrders": [],
+    "Employee": {
+      "ID": "E001"
+    },
+    "Table": {
+      "TableNumber": 1,
+      "Seats": 4,
+      "IsAvailable": true
+    },
+    "ClientWantsCheck": false,
+    "IsClosedOut": false
   }
 ]

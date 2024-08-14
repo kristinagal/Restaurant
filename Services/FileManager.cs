@@ -1,9 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using iTextSharp.text;
+using iTextSharp.text.pdf;
+using Newtonsoft.Json;
+using Restaurant.Interfaces;
+using Restaurant.Models;
 using Formatting = Newtonsoft.Json.Formatting;
 
-namespace Restaurant
+namespace Restaurant.Services
 {
-    public class FileManager
+    public class FileManager : IFileManager
     {
         private readonly string _folderPath;
         private const string restaurantChecksFileName = "RestaurantChecks.json";
@@ -29,28 +33,22 @@ namespace Restaurant
         {
             var path = Path.Combine(_folderPath, fileName);
 
-            // Check if the file already exists and has content
             if (File.Exists(path))
             {
                 var lines = File.ReadAllLines(path).ToList();
 
-                // If the file has lines, assume the first line is the header
                 if (lines.Count > 0)
                 {
-                    // Extract the existing header and data
                     var existingHeader = lines.First();
                     var existingData = lines.Skip(1).ToList();
 
-                    // Create the new content with updated records
                     var csvLines = new List<string> { existingHeader };
                     csvLines.AddRange(records.Select(toCsvLine));
 
-                    // Write updated content to the file
                     File.WriteAllLines(path, csvLines);
                 }
                 else
                 {
-                    // If the file is empty, write the header and data
                     var csvLines = new List<string>();
                     if (!string.IsNullOrEmpty(header))
                     {
@@ -62,7 +60,6 @@ namespace Restaurant
             }
             else
             {
-                // If the file does not exist, create it with header and data
                 var csvLines = new List<string>();
                 if (!string.IsNullOrEmpty(header))
                 {
@@ -91,9 +88,23 @@ namespace Restaurant
             File.WriteAllText(restaurantChecksPath, json);
         }
 
+        public void WriteCheckToFile(string path, string content)
+        {
+            File.WriteAllText(path, content);
+        }
+
         public List<Order> ReadOrdersFromJsonFile()
         {
             return ReadJsonFile<Order>(restaurantChecksFileName);
+        }
+
+        public void GeneratePdfForCustomer(Order order, string path)
+        {
+            Document doc = new Document();
+            PdfWriter.GetInstance(doc, new FileStream(path, FileMode.Create));
+            doc.Open();
+            doc.Add(new Paragraph(order.GetOrderSummaryForCustomer()));
+            doc.Close();
         }
 
     }
