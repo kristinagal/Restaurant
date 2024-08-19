@@ -20,6 +20,7 @@ namespace Restaurant.Services
         }
 
         public List<T> ReadCsvFile<T>(string fileName, Func<string[], T> map)
+        //csv failu skaitymas, reikia paduoti ir mappinimo funkcija, tada galima skaityti ivairius failus
         {
             var path = Path.Combine(_folderPath, fileName);
             var lines = File.ReadAllLines(path);
@@ -30,6 +31,7 @@ namespace Restaurant.Services
         }
 
         public void WriteCsvFile<T>(string fileName, IEnumerable<T> records, Func<T, string> toCsvLine, string header = null)
+        //tas pats, plius jei failu nera - sukuriami nauji su atributu pavadinimais pirmoj eilutej
         {
             var path = Path.Combine(_folderPath, fileName);
 
@@ -71,6 +73,7 @@ namespace Restaurant.Services
         }
 
         public List<T> ReadJsonFile<T>(string fileName)
+        //json failu skaitymas/rasymas - orderiu informacija restoranui, ten visi orderiai uzdaryti ir dar ne
         {
             var path = Path.Combine(_folderPath, fileName);
             if (!File.Exists(path))

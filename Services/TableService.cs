@@ -25,6 +25,7 @@ namespace Restaurant.Services
         }
 
         public void TableCheckOut(int tableNumber)
+            //cia is esmes visur yra tik kaitaliojama informacija, ar staliukas laisvas, ar uzimtas ir tai rasoma i faila.
         {
             if (_currentOrders.ContainsKey(tableNumber))
             {

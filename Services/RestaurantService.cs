@@ -37,12 +37,14 @@ namespace Restaurant.Services
         }
 
         public void InitializeFiles()
+            //vykdoma tik karta isijungus programa, veliau skaitomi/rasomi tik reikalingi failai
         {
             try
             {
                 _fileManager = new FileManager(_folderPath);
                 _uiService = new UiService();
 
+                //paduodame failo pavadinima ir failo ir objecto mappinimo funkcija
                 var employees = _fileManager.ReadCsvFile("Employees.csv", tokens => new Employee
                 {
                     ID = tokens[0]
@@ -70,6 +72,7 @@ namespace Restaurant.Services
                 _tableService = new TableService(tables, _fileManager);
                 _orderService = new OrderService(foodMenu, drinksMenu, _fileManager, _emailService);
 
+                //nuskaitomi neuzdaryti orderiai, jei tokiu buvo (t.y. bet kuriuo momentu uzdarius programa yra issaugoma informacija
                 var existingOrders = _fileManager.ReadOrdersFromJsonFile();
                 foreach (var order in existingOrders.Where(o => !o.IsClosedOut))
                 {
@@ -130,6 +133,7 @@ namespace Restaurant.Services
         }
 
         public void ShowTableMenu()
+            //visa 1ojo (staliuku) meniu logika, naudojama UIService ivestim skaityti, tuomet perduodama pagal logika order arba table servisams
         {
             while (true)
             {
@@ -186,6 +190,7 @@ namespace Restaurant.Services
         }
 
         public void ShowOrderMenu(Order order)
+        //kiekvieno orderio meniu logika
         {
             while (true)
             {

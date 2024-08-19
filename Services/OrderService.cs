@@ -27,6 +27,7 @@ namespace Restaurant.Services
         }
 
         public void AddFood(Order order, int foodIndex, int quantity)
+            //pridedamas pasirinktas kiekis pasirinkto maisto + timestamp
         {
             var foodItem = _foodMenu[foodIndex];
 
@@ -46,6 +47,7 @@ namespace Restaurant.Services
         }
 
         public void AddDrink(Order order, int drinkIndex, int quantity)
+        //pridedamas pasirinktas kiekis pasirinkto gerimo + timestamp
         {
             var drinkItem = _drinkMenu[drinkIndex];
 
@@ -65,6 +67,7 @@ namespace Restaurant.Services
         }
 
         public void CloseOrder(Order order, bool clientWantsCheck, string email, string folderPath)
+            //orderio uzdarymas - formuojami cekiai, pdf failai, email ir atlaisvinamas staliukas
         {
             if (order.FoodOrders.Count == 0 && order.DrinkOrders.Count == 0)
             {
@@ -96,6 +99,7 @@ namespace Restaurant.Services
         }
 
         public void SaveOrder(Order order)
+            // irasomi visi esami orderio pakeitimai i faila
         {
             var orders = _fileManager.ReadOrdersFromJsonFile();
             var existingOrderIndex = orders.FindIndex(o => o.OrderNumber == order.OrderNumber && o.Table.TableNumber == order.Table.TableNumber);
