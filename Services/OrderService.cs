@@ -15,10 +15,10 @@ namespace Restaurant.Services
     {
         private readonly List<FoodItem> _foodMenu;
         private readonly List<DrinkItem> _drinkMenu;
-        private readonly FileManager _fileManager;
+        private readonly IFileManager _fileManager;
         private readonly IEmailService _emailService;
 
-        public OrderService(List<FoodItem> foodMenu, List<DrinkItem> drinkMenu, FileManager fileManager, IEmailService emailService)
+        public OrderService(List<FoodItem> foodMenu, List<DrinkItem> drinkMenu, IFileManager fileManager, IEmailService emailService)
         {
             _foodMenu = foodMenu;
             _drinkMenu = drinkMenu;

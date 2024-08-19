@@ -1,12 +1,9 @@
-﻿using Microsoft.Extensions.Hosting;
-using Restaurant.Services;
-using System;
-using System.Net;
-using System.Net.Mail;
+﻿using Restaurant.Services;
+
 
 namespace Restaurant
 {
-    internal class Program
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -16,6 +13,7 @@ namespace Restaurant
 
             var restaurantApp = new RestaurantService(folderPath, emailService);
             restaurantApp.Start();
+
 
         }
        

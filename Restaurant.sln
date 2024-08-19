@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Restaurant", "Restaurant.csproj", "{46D80565-02D4-4687-BE7E-57AFBA9412E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Restaurant", "Restaurant.csproj", "{46D80565-02D4-4687-BE7E-57AFBA9412E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileManagerTests1", "..\FileManagerTests1\FileManagerTests1.csproj", "{BD39AD72-0015-42B3-BB65-5710CAA2DBB2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{46D80565-02D4-4687-BE7E-57AFBA9412E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46D80565-02D4-4687-BE7E-57AFBA9412E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46D80565-02D4-4687-BE7E-57AFBA9412E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD39AD72-0015-42B3-BB65-5710CAA2DBB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD39AD72-0015-42B3-BB65-5710CAA2DBB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD39AD72-0015-42B3-BB65-5710CAA2DBB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD39AD72-0015-42B3-BB65-5710CAA2DBB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

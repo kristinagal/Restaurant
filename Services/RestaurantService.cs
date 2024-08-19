@@ -7,9 +7,9 @@ namespace Restaurant.Services
     {
         private readonly string _folderPath;
         private FileManager _fileManager;
-        private UiService _uiService;
-        private TableService _tableService;
-        private OrderService _orderService;
+        private IUiService _uiService;
+        private ITableService _tableService;
+        private IOrderService _orderService;
         private readonly IEmailService _emailService;
 
         public RestaurantService(string folderPath, IEmailService emailService)

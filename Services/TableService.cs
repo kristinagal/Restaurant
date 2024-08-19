@@ -13,14 +13,15 @@ namespace Restaurant.Services
     {
         private readonly List<Table> _tables;
         private readonly Dictionary<int, Order> _currentOrders;
-        private FileManager _fileManager;
+        private readonly IFileManager _fileManager;
+
         public Employee CurrentEmployee { get; private set; }
 
-        public TableService(List<Table> tables, FileManager fileManager)
+        public TableService(List<Table> tables, IFileManager fileManager)
         {
-            _tables = tables;
+            _tables = tables ?? throw new ArgumentNullException(nameof(tables));
             _currentOrders = new Dictionary<int, Order>();
-            _fileManager = fileManager;
+            _fileManager = fileManager ?? throw new ArgumentNullException(nameof(fileManager));
         }
 
         public void TableCheckOut(int tableNumber)
@@ -46,12 +47,17 @@ namespace Restaurant.Services
                 UpdateTableAvailability(table.TableNumber, false);
             }
 
-
             return null;
         }
 
         public void CreateNewOrder(Order order)
         {
+            if (order == null || order.Table == null)
+            {
+                Console.WriteLine("Order or Table is null.");
+                return;
+            }
+
             _currentOrders[order.Table.TableNumber] = order;
             UpdateTableAvailability(order.Table.TableNumber, false);
         }

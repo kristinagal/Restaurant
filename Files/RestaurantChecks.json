@@ -183,5 +183,29 @@
     },
     "ClientWantsCheck": false,
     "IsClosedOut": false
+  },
+  {
+    "OrderNumber": 8332,
+    "FoodOrders": [
+      {
+        "FoodItem": {
+          "Name": "Burger",
+          "Price": 5.99
+        },
+        "Quantity": 1,
+        "TimeStamp": "2024-08-19T16:53:07.928861+03:00"
+      }
+    ],
+    "DrinkOrders": [],
+    "Employee": {
+      "ID": "E001"
+    },
+    "Table": {
+      "TableNumber": 2,
+      "Seats": 2,
+      "IsAvailable": true
+    },
+    "ClientWantsCheck": true,
+    "IsClosedOut": true
   }
 ]
